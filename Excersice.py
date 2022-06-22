@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utg-8 -*-
+# -*- coding: utf-8 -*-
 
 __author__ = "Carlos Vicente"
 __credits__ = ["Carlos Vicente"]
@@ -18,10 +18,6 @@ import time
 from pynput.keyboard import Key, Controller
 
 
-# imports from other files
-from .my_file import OtherClass
-
-
 class WorkLogin:
     """Class that performs functions for logging"""
 
@@ -37,7 +33,8 @@ class WorkLogin:
         if not os.path.exists(self.conf_path):
             self.configure()
         # Opens a terminal
-        os.system("gnome-terminal")
+        #os.system("gnome-terminal")
+        os.system("cmd")
         time.sleep(1)
         with open(self.conf_path, "r") as f:
             for cmd in f:
@@ -52,3 +49,26 @@ class WorkLogin:
 
         while cmds[-1] != "":
             cmds.append(input("Next command, or hit enter:\n"))
+            with open(self.conf_path, "w+") as f:
+                f.write("\n".join(cmds))
+        
+    def _run_cmd(self, cmd):
+        """Runs a command slowly so as not to error"""
+
+        new_cmd = cmd.replace("\n","")
+        for c in new_cmd:
+            self._type_key(c)
+        self._type_key(Key.enter)
+        time.sleep(.1)
+
+    def _type_key(self, key):
+        """Types a key with a delay"""
+
+        self.keyboard.press(key)
+        time.sleep(.005)
+        self.keyboard.release(key)
+        time.sleep(.005)
+
+
+if __name__ == "__main__":
+    WorkLogin().login()
